@@ -1,0 +1,23 @@
+# Тестовая коллекция в mongo atlas  sample_mflix.theaters. Найти все кинотеатры в Калифорнии и посчитать их количество 
+
+[
+  {
+    $match:
+      /**
+       * query: The query in MQL.
+       */
+      {
+        "location.address.state": "CA",
+      },
+  },
+  {
+    $count:
+      /**
+       * Provide the field name for the count.
+       */
+      "string",
+  },
+]
+
+#Тестовая коллекция в mongo atlas  Collection movies. Найти фильм с самым большим количеством отзывов и напишите его название 
+
