@@ -1,0 +1,258 @@
+# Найдите средний возраст из коллекции ich.US_Adult_Income
+#OPTION 1
+[
+  {
+    $group:
+      /**
+       * _id: The id of the group.
+       * fieldN: The first field name.
+       */
+      {
+        _id: "$gender",
+        age: {
+          $avg: "$age"
+        }
+      }
+  },
+  {
+    $match:
+      /**
+       * query: The query in MQL.
+       */
+      {
+        _id: {
+          $not: {
+            $eq: " ?"
+          }
+        }
+      }
+  }
+]
+#OPTION 3
+[
+  {
+    $group:
+      /**
+       * _id: The id of the group.
+       * fieldN: The first field name.
+       */
+      {
+        _id: " ",
+        age: {
+          $avg: "$age"
+        }
+      }
+  },
+  {
+    $match:
+      /**
+       * query: The query in MQL.
+       */
+      {
+        _id: {
+          $not: {
+            $eq: " ?"
+          }
+        }
+      }
+  }
+]
+
+#Поменяв подключение к базе данных, создать коллекцию orders_NAME (для уникальности - добавим ваше имя в название) 
+#со свойствами id, customer, product, amount, city, используя следующие данные:
+
+#1 Olga Apple 15.55 Berlin
+#2 Anna Apple 10.05 Madrid
+#3 Olga Kiwi 9.6 Berlin
+#4 Anton Apple 20 Roma
+#5 Olga Banana 8 Madrid
+#6 Petr Orange 18.3 Paris
+
+db.createCollection("boro_orders")
+db.boro_orders.insertMany([
+{
+id: 1,
+customer: "Olga",
+product: "Apple",
+amount: 15.55,
+city: "Berlin"
+},
+{
+id: 2,
+customer: "Anna",
+product: "Apple",
+amount: 10.05,
+city: "Madrid"
+},
+{
+id: 3,
+customer: "Olga",
+product: "Kiwi",
+amount: 9.6,
+city: "Berlin"
+},
+{
+id: 4,
+customer: "Anton",
+product: "Apple",
+amount: 20,
+city: "Rome"
+},
+{
+id: 5,
+customer: "Olga",
+product: "Banana",
+amount: 8,
+city: "Madrid"
+},
+{
+id: 6,
+customer: "Peter",
+product: "Orange",
+amount: 18.3,
+city: "Paris"
+}
+])
+
+#Найти сколько всего было совершено покупок
+/**
+ * Provide the field name for the count.
+ */
+"string"
+
+#Найти сколько всего раз были куплены яблоки
+[
+  {
+    $match:
+      /**
+       * query: The query in MQL.
+       */
+      {
+        product: "Apple"
+      }
+  },
+  {
+    $count:
+      /**
+       * Provide the field name for the count.
+       */
+      "string"
+  }
+]
+
+#Вывести идентификаторы трех самые дорогих покупок
+[
+  {
+    $sort:
+      /**
+       * Provide any number of field/order pairs.
+       */
+      {
+        amount: -1
+      }
+  },
+  {
+    $limit:
+      /**
+       * Provide the number of documents to limit.
+       */
+      3
+  },
+  {
+    $project:
+      /**
+       * specifications: The fields to
+       *   include or exclude.
+       */
+      {
+        _id: 1,
+        id: 1,
+        product: 1
+      }
+  }
+]
+
+#Найти сколько всего покупок было совершено в Берлине
+[
+  {
+    $match:
+      /**
+       * query: The query in MQL.
+       */
+      {
+        city: "Berlin"
+      }
+  },
+  {
+    $count:
+      /**
+       * Provide the field name for the count.
+       */
+      "string"
+  }
+]
+
+#Найти количество покупок яблок в городах Берлин и Мадрид
+[
+  {
+    $match:
+      /**
+       * query: The query in MQL.
+       */
+      {
+        city: {
+          $in: ["Madrid", "Berlin"]
+        }
+      }
+  },
+  {
+    $count:
+      /**
+       * Provide the field name for the count.
+       */
+      "string"
+  }
+]
+
+#Найти сколько было потрачено каждым покупателем
+[
+  {
+    $group:
+      /**
+       * _id: The id of the group.
+       * fieldN: The first field name.
+       */
+      {
+        _id: "$customer",
+        total: {
+          $sum: "$amount"
+        }
+      }
+  }
+]
+
+#Найти в каких городах совершала покупки Ольга
+[
+  {
+    $match:
+      /**
+       * query: The query in MQL.
+       */
+      {
+        customer: "Olga"
+      }
+  },
+  {
+    $group:
+      /**
+       * _id: The id of the group.
+       * fieldN: The first field name.
+       */
+      {
+        _id: "$city",
+        total: {
+          $sum: "$amount"
+        }
+      }
+  }
+]
